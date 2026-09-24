@@ -1,0 +1,17 @@
+name: Keep Render Site Awake
+
+on:
+  schedule:
+    # Every 10 minutes — stays comfortably under Render's 15-minute
+    # inactivity sleep threshold on the free tier.
+    - cron: '*/10 * * * *'
+  workflow_dispatch: {}   # lets you trigger it manually from the Actions tab too
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping PrecisionML AI site
+        run: |
+          echo "Pinging site to keep Render container warm..."
+          curl -sSf -o /dev/null -w "HTTP %{http_code} — %{time_total}s\n" https://precisionmlai.onrender.com/ || echo "Ping failed — site may currently be spinning up, that's expected occasionally."
